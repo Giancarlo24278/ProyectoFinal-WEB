@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 
-import FormularioItem from './components/FormularioItem'
-import ListaItems from './components/ListaItems'
+import FormularioItem from './Components/FormularioItems'
+import ListaItems from './Components/ListaItems'
 
-import { obtenerItems, guardarItems } from './services/storage'
+import { obtenerItems, guardarItems } from './Services/Almacen'
 
 import './App.css'
 
