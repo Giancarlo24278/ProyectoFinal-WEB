@@ -1,41 +1,70 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
 
-import FormularioItem from './Components/FormularioItems'
-import ListaItems from './Components/ListaItems'
+import { StorageContext } from './context/StorageProvider'
+import { ThemeContext } from './context/ThemeProvider'
 
-import { obtenerItems, guardarItems } from './Services/Almacen'
-
-import './App.css'
+import FormularioItem from './components/FormularioItem'
+import ListaItems from './components/ListaItems'
 
 function App() {
-  const [items, setItems] = useState(() => obtenerItems())
+  const {
+    items,
+    modo,
+    setModo
+  } = useContext(StorageContext)
+
+  const { toggleTema } =
+    useContext(ThemeContext)
 
   useEffect(() => {
-    guardarItems(items)
-  }, [items])
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.key === 'n') {
+        document
+          .getElementById('input-juego')
+          ?.focus()
+      }
 
-  const agregarItem = (nuevoItem) => {
-    setItems([...items, nuevoItem])
-  }
+      if (e.key === 't') {
+        toggleTema()
+      }
+    }
 
-  const eliminarItem = (id) => {
-    const nuevosItems = items.filter(
-      (item) => item.id !== id
+    window.addEventListener(
+      'keydown',
+      handleKeyDown
     )
 
-    setItems(nuevosItems)
-  }
+    return () => {
+      window.removeEventListener(
+        'keydown',
+        handleKeyDown
+      )
+    }
+  }, [toggleTema])
 
   return (
     <div className="container">
-      <h1>🎮 Steam Progress Tracker</h1>
+      <h1>🎮 Steam Tracker</h1>
 
-      <FormularioItem agregarItem={agregarItem} />
+      <button
+        onClick={() =>
+          setModo(
+            modo === 'local'
+              ? 'api'
+              : 'local'
+          )
+        }
+      >
+        Modo: {modo}
+      </button>
 
-      <ListaItems
-        items={items}
-        eliminarItem={eliminarItem}
-      />
+      <button onClick={toggleTema}>
+        Cambiar Tema
+      </button>
+
+      <FormularioItem />
+
+      <ListaItems items={items} />
     </div>
   )
 }
