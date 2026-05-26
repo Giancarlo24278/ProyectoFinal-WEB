@@ -1,12 +1,24 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { categorias } from '../utils/categorias'
 
 function FormularioItem({ agregarItem }) {
+  const inputRef = useRef(null)
+  const intervalRef = useRef(null)
   const [nombre, setNombre] = useState('')
   const [categoriaId, setCategoriaId] = useState('rpg')
   const [horasJugadas, setHorasJugadas] = useState('')
   const [horasTotales, setHorasTotales] = useState('')
   const [imagen, setImagen] = useState('')
+
+  useEffect(() => {
+    inputRef.current?.focus()
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+    }
+  }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -47,6 +59,8 @@ function FormularioItem({ agregarItem }) {
       <h2>Agregar Juego</h2>
 
       <input
+        ref={inputRef}
+        id="input-juego"
         type="text"
         placeholder="Nombre del juego"
         value={nombre}
