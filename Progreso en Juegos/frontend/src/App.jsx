@@ -7,10 +7,12 @@ import FormularioItem from './components/FormularioItem'
 import ListaItems from './components/ListaItems'
 
 function App() {
+  // Extraemos 'eliminarItem' del contexto de almacenamiento junto a los demás datos
   const {
     items,
     modo,
-    setModo
+    setModo,
+    eliminarItem 
   } = useContext(StorageContext)
 
   const { toggleTema } =
@@ -27,6 +29,7 @@ function App() {
       clearInterval(intervalRef.current)
     }
   }, [])
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.ctrlKey && e.key === 'n') {
@@ -75,7 +78,8 @@ function App() {
 
       <FormularioItem />
 
-      <ListaItems items={items} />
+      {/* Ahora sí le pasamos la función al componente de la lista */}
+      <ListaItems items={items} eliminarItem={eliminarItem} />
     </div>
   )
 }
