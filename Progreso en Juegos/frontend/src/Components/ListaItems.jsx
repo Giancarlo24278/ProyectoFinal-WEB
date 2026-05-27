@@ -7,11 +7,10 @@ function ListaItems({ items, eliminarItem }) {
         <ItemCard
           key={item.id}
           item={item}
-          eliminarItem={eliminarItem}
+          onEliminar={eliminarItem}
         />
       ))}
     </div>
   )
 }
-
 export default ListaItems

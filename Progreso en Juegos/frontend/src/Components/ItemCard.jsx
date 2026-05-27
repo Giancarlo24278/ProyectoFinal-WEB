@@ -1,4 +1,4 @@
-function Carta({ item }) {
+function ItemCard({ item, onEliminar }) {
   return (
     <div className="card">
       <img
@@ -7,7 +7,9 @@ function Carta({ item }) {
       />
 
       <div className="card-content">
-        <h2>{item.nombre}</h2>
+        <h2>
+          {item.categoria?.emoji} {item.nombre}
+        </h2>
 
         <p>
           {item.atributos.horasJugadas} /
@@ -26,8 +28,16 @@ function Carta({ item }) {
         <p>
           {item.atributos.progreso}% completado
         </p>
+
+        <button
+          className="btn-eliminar"
+          onClick={() => onEliminar(item.id)}
+        >
+          Eliminar
+        </button>
       </div>
     </div>
   )
 }
-export default Carta
+
+export default ItemCard
