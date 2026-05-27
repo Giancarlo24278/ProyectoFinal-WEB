@@ -30,5 +30,4 @@ function Carta({ item }) {
     </div>
   )
 }
-
 export default Carta
