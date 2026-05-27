@@ -1,4 +1,4 @@
-import ItemCard from './Carta'
+import ItemCard from './ItemCard'
 
 function ListaItems({ items, eliminarItem }) {
   return (

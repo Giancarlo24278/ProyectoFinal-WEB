@@ -18,7 +18,11 @@ export function StorageProvider({ children }) {
 
   const setModo = (nuevoModo) => {
     setModoState(nuevoModo)
-    localStorage.setItem('modo', nuevoModo)
+
+    localStorage.setItem(
+      'modo',
+      nuevoModo
+    )
   }
 
   const obtenerItems = useCallback(async () => {
@@ -44,46 +48,62 @@ export function StorageProvider({ children }) {
   }, [modo])
 
   const guardarItem = async (item) => {
-    if (modo === 'api') {
-      await fetch(`${API_URL}/api/items`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(item)
-      })
+    try {
+      if (modo === 'api') {
+        await fetch(`${API_URL}/api/items`, {
+          method: 'POST',
+          headers: {
+            'Content-Type':
+              'application/json'
+          },
+          body: JSON.stringify(item)
+        })
 
-      obtenerItems()
-    } else {
-      const nuevosItems = [...items, item]
+        obtenerItems()
+      } else {
+        const nuevosItems = [
+          ...items,
+          item
+        ]
 
-      localStorage.setItem(
-        'items',
-        JSON.stringify(nuevosItems)
-      )
+        localStorage.setItem(
+          'items',
+          JSON.stringify(nuevosItems)
+        )
 
-      setItems(nuevosItems)
+        setItems(nuevosItems)
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 
   const eliminarItem = async (id) => {
-    if (modo === 'api') {
-      await fetch(`${API_URL}/api/items/${id}`, {
-        method: 'DELETE'
-      })
+    try {
+      if (modo === 'api') {
+        await fetch(
+          `${API_URL}/api/items/${id}`,
+          {
+            method: 'DELETE'
+          }
+        )
 
-      obtenerItems()
-    } else {
-      const nuevosItems = items.filter(
-        (item) => item.id !== id
-      )
+        obtenerItems()
+      } else {
+        const nuevosItems =
+          items.filter(
+            (item) => item.id !== id
+          )
 
-      localStorage.setItem(
-        'items',
-        JSON.stringify(nuevosItems)
-      )
+        localStorage.setItem(
+          'items',
+          JSON.stringify(nuevosItems)
+        )
 
-      setItems(nuevosItems)
+        setItems(nuevosItems)
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -97,6 +117,7 @@ export function StorageProvider({ children }) {
         modo,
         setModo,
         items,
+        obtenerItems,
         guardarItem,
         eliminarItem
       }}

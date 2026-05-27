@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 
 import { StorageContext } from './context/StorageProvider'
 import { ThemeContext } from './context/ThemeProvider'
@@ -15,7 +15,18 @@ function App() {
 
   const { toggleTema } =
     useContext(ThemeContext)
+    
+  const intervalRef = useRef()
 
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      console.log('autosave activo')
+    }, 5000)
+
+    return () => {
+      clearInterval(intervalRef.current)
+    }
+  }, [])
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.ctrlKey && e.key === 'n') {

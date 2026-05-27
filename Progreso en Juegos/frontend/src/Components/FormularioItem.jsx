@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
-import { categorias } from '../utils/categorias'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { categorias } from '../utils/Categorias'
+import { StorageContext } from '../context/StorageProvider'
 
-function FormularioItem({ agregarItem }) {
+function FormularioItem() {
+  const { guardarItem } = useContext(StorageContext)
   const inputRef = useRef(null)
   const intervalRef = useRef(null)
   const [nombre, setNombre] = useState('')
@@ -46,7 +48,7 @@ function FormularioItem({ agregarItem }) {
       activo: true
     }
 
-    agregarItem(nuevoItem)
+    guardarItem(nuevoItem)
 
     setNombre('')
     setHorasJugadas('')

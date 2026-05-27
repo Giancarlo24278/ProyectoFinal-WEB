@@ -2,26 +2,31 @@ export const categorias = [
   {
     id: 'rpg',
     nombre: 'RPG',
-    emoji: '⚔️'
+    emoji: '⚔️',
+    color: '#ef4444'
   },
   {
     id: 'rouguelike',
     nombre: 'Rouguelike',
-    emoji: '🎲'
+    emoji: '🎲',
+    color: '#3b82f6'
   },
   {
     id: 'miedo',
     nombre: 'Miedo',
-    emoji: '👻'
+    emoji: '👻',
+    color: '#8b5cf6'
   },
   {
     id: 'sandbox',
     nombre: 'Sandbox',
-    emoji: '🧱'
+    emoji: '🧱',
+    color: '#10b981'
   },
   {
     id: 'multiplayer',
     nombre: 'Multiplayer',
-    emoji: '👥'
+    emoji: '👥',
+    color: '#f59e0b'
   }
 ]
