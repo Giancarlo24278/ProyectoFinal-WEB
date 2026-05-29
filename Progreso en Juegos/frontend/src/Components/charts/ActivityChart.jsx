@@ -21,7 +21,11 @@ export default function ActivityChart({ data }) {
           <YAxis allowDecimals={false} />
           <Tooltip />
           <Legend />
-          <Bar dataKey="cantidad" name="Actividades" />
+          <Bar
+            dataKey="cantidad"
+            name="Actividades"
+            fill="#3b82f6"
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

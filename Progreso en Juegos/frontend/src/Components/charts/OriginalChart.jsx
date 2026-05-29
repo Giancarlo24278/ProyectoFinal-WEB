@@ -21,7 +21,11 @@ export default function OriginalChart({ data }) {
           <YAxis allowDecimals={false} />
           <Tooltip />
           <Legend />
-          <Bar dataKey="promedio" name="Promedio % progreso" />
+          <Bar
+            dataKey="promedio"
+            name="Promedio % progreso"
+            fill="#8b5cf6"
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

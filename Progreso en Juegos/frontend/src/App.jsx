@@ -108,7 +108,7 @@ function App() {
     const conteo = {}
 
     itemsVisibles.forEach((item) => {
-      const key = item.categoriaNombre
+      const key = item.categoriaId
       conteo[key] = (conteo[key] || 0) + 1
     })
 
@@ -122,7 +122,7 @@ function App() {
     const grupos = {}
 
     itemsVisibles.forEach((item) => {
-      const key = item.categoriaNombre
+      const key = item.categoriaId
 
       if (!grupos[key]) {
         grupos[key] = {
@@ -182,7 +182,7 @@ function App() {
     <div className="container fase3">
       <header className="topbar">
         <div>
-          <h1>🎮 Steam Tracker — Fase 3</h1>
+          <h1>🎮 Steam Tracker</h1>
           <p>
             useReducer, Recharts, useMemo, useCallback y React.memo
           </p>
