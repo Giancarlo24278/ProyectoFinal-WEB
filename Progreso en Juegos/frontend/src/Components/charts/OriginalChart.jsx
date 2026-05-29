@@ -9,6 +9,8 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 
+import { categorias } from '../../utils/Categorias'
+
 export default function OriginalChart({ data }) {
   return (
     <div className="chart-card chart-card-full">
