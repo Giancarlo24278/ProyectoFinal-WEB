@@ -1,85 +1,234 @@
-import { useContext, useEffect, useRef } from 'react'
-
-import { StorageContext } from './context/StorageProvider'
-import { ThemeContext } from './context/ThemeProvider'
+import { useCallback, useContext, useMemo } from 'react'
+import {
+  StorageContext,
+} from './context/StorageProvider'
+import {
+  ThemeContext,
+} from './context/ThemeProvider'
 
 import FormularioItem from './components/FormularioItem'
 import ListaItems from './components/ListaItems'
+import FiltersPanel from './components/fase3/FiltersPanel'
+import StatsCards from './components/fase3/StatsCards'
+import ActivityChart from './components/fase3/charts/ActivityChart'
+import CategoryChart from './components/fase3/charts/CategoryChart'
+import OriginalChart from './components/fase3/charts/OriginalChart'
+
+function getLast7Days() {
+  const days = []
+  const hoy = new Date()
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(hoy)
+    d.setDate(hoy.getDate() - i)
+
+    days.push({
+      key: d.toISOString().slice(0, 10),
+      label: d.toLocaleDateString('es-ES', {
+        weekday: 'short',
+        day: '2-digit',
+      }),
+    })
+  }
+
+  return days
+}
 
 function App() {
-  // Extraemos 'eliminarItem' del contexto de almacenamiento junto a los demás datos
   const {
     items,
-    modo,
+    historial,
+    filtroCategoria,
+    filtroEstado,
+    busqueda,
+    filtrar,
+    limpiarFiltros,
+    eliminarItem,
+    cambiarEstadoItem,
+    registrarActividad,
     setModo,
-    eliminarItem 
+    modo,
   } = useContext(StorageContext)
 
-  const { toggleTema } =
-    useContext(ThemeContext)
-    
-  const intervalRef = useRef()
+  const { toggleTema } = useContext(ThemeContext)
 
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      console.log('autosave activo')
-    }, 5000)
+  const itemsVisibles = useMemo(() => {
+    return items.filter((item) => {
+      const coincideCategoria =
+        filtroCategoria === 'todas' ||
+        item.categoriaId === filtroCategoria
 
-    return () => {
-      clearInterval(intervalRef.current)
+      const coincideEstado =
+        filtroEstado === 'todos' ||
+        item.estado === filtroEstado
+
+      const coincideBusqueda =
+        item.nombre
+          .toLowerCase()
+          .includes(busqueda.toLowerCase())
+
+      return item.activo && coincideCategoria && coincideEstado && coincideBusqueda
+    })
+  }, [items, filtroCategoria, filtroEstado, busqueda])
+
+  const stats = useMemo(() => {
+    const total = items.length
+    const visibles = itemsVisibles.length
+    const completados = items.filter(
+      (item) => item.estado === 'completado'
+    ).length
+    const archivados = items.filter(
+      (item) => !item.activo
+    ).length
+
+    return {
+      total,
+      visibles,
+      completados,
+      archivados,
     }
-  }, [])
+  }, [items, itemsVisibles])
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.ctrlKey && e.key === 'n') {
-        document
-          .getElementById('input-juego')
-          ?.focus()
-      }
-
-      if (e.key === 't') {
-        toggleTema()
-      }
-    }
-
-    window.addEventListener(
-      'keydown',
-      handleKeyDown
+  const activityData = useMemo(() => {
+    const days = getLast7Days()
+    const idsVisibles = new Set(
+      itemsVisibles.map((item) => item.id)
     )
 
-    return () => {
-      window.removeEventListener(
-        'keydown',
-        handleKeyDown
-      )
-    }
-  }, [toggleTema])
+    return days.map((day) => ({
+      dia: day.label,
+      cantidad: historial.filter((registro) => {
+        const fecha = registro.fecha.slice(0, 10)
+        return fecha === day.key && idsVisibles.has(registro.itemId)
+      }).length,
+    }))
+  }, [historial, itemsVisibles])
+
+  const categoryData = useMemo(() => {
+    const conteo = {}
+
+    itemsVisibles.forEach((item) => {
+      const key = item.categoriaNombre
+      conteo[key] = (conteo[key] || 0) + 1
+    })
+
+    return Object.entries(conteo).map(([name, value]) => ({
+      name,
+      value,
+    }))
+  }, [itemsVisibles])
+
+  const originalData = useMemo(() => {
+    const grupos = {}
+
+    itemsVisibles.forEach((item) => {
+      const key = item.categoriaNombre
+
+      if (!grupos[key]) {
+        grupos[key] = {
+          categoria: key,
+          promedio: 0,
+          count: 0,
+        }
+      }
+
+      grupos[key].promedio += item.atributos?.progreso || 0
+      grupos[key].count += 1
+    })
+
+    return Object.values(grupos).map((item) => ({
+      categoria: item.categoria,
+      promedio: item.count
+        ? Math.round(item.promedio / item.count)
+        : 0,
+    }))
+  }, [itemsVisibles])
+
+  const onChangeFiltro = useCallback(
+    (campo, valor) => {
+      filtrar(campo, valor)
+    },
+    [filtrar]
+  )
+
+  const onChangeBusqueda = useCallback(
+    (valor) => {
+      filtrar('busqueda', valor)
+    },
+    [filtrar]
+  )
+
+  const onEliminar = useCallback(
+    (id) => {
+      eliminarItem(id)
+      registrarActividad(id, 'ELIMINAR')
+    },
+    [eliminarItem, registrarActividad]
+  )
+
+  const onCambiarEstado = useCallback(
+    (id, estado) => {
+      cambiarEstadoItem(id, estado)
+      registrarActividad(id, 'CAMBIAR_ESTADO')
+    },
+    [cambiarEstadoItem, registrarActividad]
+  )
+
+  const onLimpiar = useCallback(() => {
+    limpiarFiltros()
+  }, [limpiarFiltros])
 
   return (
-    <div className="container">
-      <h1>🎮 Steam Tracker</h1>
+    <div className="container fase3">
+      <header className="topbar">
+        <div>
+          <h1>🎮 Steam Tracker — Fase 3</h1>
+          <p>
+            useReducer, Recharts, useMemo, useCallback y React.memo
+          </p>
+        </div>
 
-      <button
-        onClick={() =>
-          setModo(
-            modo === 'local'
-              ? 'api'
-              : 'local'
-          )
-        }
-      >
-        Modo: {modo}
-      </button>
+        <div className="topbar-actions">
+          <button onClick={toggleTema}>Cambiar tema</button>
+          <button
+            onClick={() =>
+              setModo(modo === 'local' ? 'api' : 'local')
+            }
+          >
+            Modo: {modo}
+          </button>
+        </div>
+      </header>
 
-      <button onClick={toggleTema}>
-        Cambiar Tema
-      </button>
+      <StatsCards
+        total={stats.total}
+        visibles={stats.visibles}
+        completados={stats.completados}
+        archivados={stats.archivados}
+      />
+
+      <FiltersPanel
+        busqueda={busqueda}
+        filtroCategoria={filtroCategoria}
+        filtroEstado={filtroEstado}
+        onChangeFiltro={onChangeFiltro}
+        onChangeBusqueda={onChangeBusqueda}
+        onLimpiar={onLimpiar}
+      />
 
       <FormularioItem />
 
-      {/* Ahora sí le pasamos la función al componente de la lista */}
-      <ListaItems items={items} eliminarItem={eliminarItem} />
+      <section className="charts-grid">
+        <ActivityChart data={activityData} />
+        <CategoryChart data={categoryData} />
+        <OriginalChart data={originalData} />
+      </section>
+
+      <ListaItems
+        items={itemsVisibles}
+        onEliminar={onEliminar}
+        onCambiarEstado={onCambiarEstado}
+      />
     </div>
   )
 }
