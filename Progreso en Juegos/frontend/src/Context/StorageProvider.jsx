@@ -2,8 +2,15 @@ import {
   createContext,
   useCallback,
   useEffect,
-  useState
+  useMemo,
+  useReducer,
+  useState,
 } from 'react'
+
+import {
+  itemsReducer,
+  estadoInicial,
+} from '../reducers/itemsReducer'
 
 export const StorageContext = createContext()
 
@@ -12,116 +19,168 @@ export function StorageProvider({ children }) {
     () => localStorage.getItem('modo') || 'local'
   )
 
-  const [items, setItems] = useState([])
-
-  const API_URL = 'http://localhost:3000'
+  const [estado, dispatch] = useReducer(
+    itemsReducer,
+    estadoInicial
+  )
 
   const setModo = (nuevoModo) => {
     setModoState(nuevoModo)
+    localStorage.setItem('modo', nuevoModo)
+  }
 
-    localStorage.setItem(
-      'modo',
-      nuevoModo
+  const obtenerItems = useCallback(() => {
+    const items = JSON.parse(
+      localStorage.getItem('items') || '[]'
     )
-  }
 
-  const obtenerItems = useCallback(async () => {
-    try {
-      if (modo === 'api') {
-        const response = await fetch(
-          `${API_URL}/api/items`
-        )
+    const historial = JSON.parse(
+      localStorage.getItem('historial') || '[]'
+    )
 
-        const data = await response.json()
-
-        setItems(data)
-      } else {
-        const data = JSON.parse(
-          localStorage.getItem('items') || '[]'
-        )
-
-        setItems(data)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }, [modo])
-
-  const guardarItem = async (item) => {
-    try {
-      if (modo === 'api') {
-        await fetch(`${API_URL}/api/items`, {
-          method: 'POST',
-          headers: {
-            'Content-Type':
-              'application/json'
-          },
-          body: JSON.stringify(item)
-        })
-
-        obtenerItems()
-      } else {
-        const nuevosItems = [
-          ...items,
-          item
-        ]
-
-        localStorage.setItem(
-          'items',
-          JSON.stringify(nuevosItems)
-        )
-
-        setItems(nuevosItems)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const eliminarItem = async (id) => {
-    try {
-      if (modo === 'api') {
-        await fetch(
-          `${API_URL}/api/items/${id}`,
-          {
-            method: 'DELETE'
-          }
-        )
-
-        obtenerItems()
-      } else {
-        const nuevosItems =
-          items.filter(
-            (item) => item.id !== id
-          )
-
-        localStorage.setItem(
-          'items',
-          JSON.stringify(nuevosItems)
-        )
-
-        setItems(nuevosItems)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
+    dispatch({
+      type: 'HIDRATAR',
+      payload: {
+        lista: items,
+        historial,
+      },
+    })
+  }, [])
 
   useEffect(() => {
     obtenerItems()
   }, [obtenerItems])
 
+  const guardarItem = useCallback((item) => {
+    dispatch({
+      type: 'AGREGAR',
+      payload: item,
+    })
+
+    const itemsActualizados = [
+      ...JSON.parse(localStorage.getItem('items') || '[]'),
+      item,
+    ]
+
+    localStorage.setItem(
+      'items',
+      JSON.stringify(itemsActualizados)
+    )
+  }, [])
+
+  const eliminarItem = useCallback((id) => {
+    dispatch({
+      type: 'ELIMINAR',
+      payload: id,
+    })
+
+    const items = JSON.parse(
+      localStorage.getItem('items') || '[]'
+    )
+
+    const itemsActualizados = items.map((item) =>
+      item.id === id
+        ? { ...item, activo: false }
+        : item
+    )
+
+    localStorage.setItem(
+      'items',
+      JSON.stringify(itemsActualizados)
+    )
+  }, [])
+
+  const cambiarEstadoItem = useCallback((id, estado) => {
+    dispatch({
+      type: 'CAMBIAR_ESTADO',
+      payload: { id, estado },
+    })
+
+    const items = JSON.parse(
+      localStorage.getItem('items') || '[]'
+    )
+
+    const itemsActualizados = items.map((item) =>
+      item.id === id
+        ? { ...item, estado }
+        : item
+    )
+
+    localStorage.setItem(
+      'items',
+      JSON.stringify(itemsActualizados)
+    )
+  }, [])
+
+  const filtrar = useCallback((campo, valor) => {
+    dispatch({
+      type: 'FILTRAR',
+      payload: { campo, valor },
+    })
+  }, [])
+
+  const limpiarFiltros = useCallback(() => {
+    dispatch({ type: 'LIMPIAR_FILTROS' })
+  }, [])
+
+  const registrarActividad = useCallback((itemId, tipo) => {
+    const registro = {
+      itemId,
+      tipo,
+      fecha: new Date().toISOString(),
+    }
+
+    dispatch({
+      type: 'REGISTRAR_ACTIVIDAD',
+      payload: registro,
+    })
+
+    const historial = JSON.parse(
+      localStorage.getItem('historial') || '[]'
+    )
+
+    localStorage.setItem(
+      'historial',
+      JSON.stringify([...historial, registro])
+    )
+  }, [])
+
+  const value = useMemo(
+    () => ({
+      modo,
+      setModo,
+      items: estado.lista,
+      historial: estado.historial,
+      filtroCategoria: estado.filtroCategoria,
+      filtroEstado: estado.filtroEstado,
+      busqueda: estado.busqueda,
+      obtenerItems,
+      guardarItem,
+      eliminarItem,
+      cambiarEstadoItem,
+      filtrar,
+      limpiarFiltros,
+      registrarActividad,
+    }),
+    [
+      modo,
+      estado.lista,
+      estado.historial,
+      estado.filtroCategoria,
+      estado.filtroEstado,
+      estado.busqueda,
+      obtenerItems,
+      guardarItem,
+      eliminarItem,
+      cambiarEstadoItem,
+      filtrar,
+      limpiarFiltros,
+      registrarActividad,
+    ]
+  )
+
   return (
-    <StorageContext.Provider
-      value={{
-        modo,
-        setModo,
-        items,
-        obtenerItems,
-        guardarItem,
-        eliminarItem
-      }}
-    >
+    <StorageContext.Provider value={value}>
       {children}
     </StorageContext.Provider>
   )
