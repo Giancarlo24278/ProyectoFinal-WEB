@@ -6,7 +6,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-import { categorias } from '../../../utils/Categorias'
+import { categorias } from '../../utils/Categorias'
 
 export default function CategoryChart({ data }) {
   return (
@@ -21,7 +21,7 @@ export default function CategoryChart({ data }) {
             nameKey="name"
             outerRadius={95}
           >
-            {data.map((entry) => {
+            {data?.map((entry) => {
               const categoria = categorias.find(
                 (c) => c.nombre === entry.name
               )

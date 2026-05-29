@@ -53,4 +53,3 @@ function ItemCard({ item, onEliminar, onCambiarEstado }) {
 }
 
 export default React.memo(ItemCard)
-export default ItemCard

@@ -8,11 +8,11 @@ import {
 
 import FormularioItem from './components/FormularioItem'
 import ListaItems from './components/ListaItems'
-import FiltersPanel from './components/fase3/FiltersPanel'
-import StatsCards from './components/fase3/StatsCards'
-import ActivityChart from './components/fase3/charts/ActivityChart'
-import CategoryChart from './components/fase3/charts/CategoryChart'
-import OriginalChart from './components/fase3/charts/OriginalChart'
+import FiltersPanel from './components/FiltersPanel'
+import StatsCards from './components/StatsCards'
+import ActivityChart from './components/charts/ActivityChart'
+import CategoryChart from './components/charts/CategoryChart'
+import OriginalChart from './components/charts/OriginalChart'
 
 function getLast7Days() {
   const days = []
