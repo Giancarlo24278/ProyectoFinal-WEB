@@ -1,4 +1,6 @@
-function ItemCard({ item, onEliminar }) {
+import React from 'react'
+
+function ItemCard({ item, onEliminar, onCambiarEstado }) {
   return (
     <div className="card">
       <img
@@ -11,23 +13,33 @@ function ItemCard({ item, onEliminar }) {
           {item.categoria?.emoji} {item.nombre}
         </h2>
 
+        <p>{item.categoriaNombre || item.categoriaId}</p>
+
         <p>
-          {item.atributos.horasJugadas} /
-          {item.atributos.horasTotales} horas
+          {item.atributos.horasJugadas} / {item.atributos.horasTotales} horas
         </p>
 
         <div className="barra">
           <div
             className="progreso"
             style={{
-              width: `${item.atributos.progreso}%`
+              width: `${item.atributos.progreso}%`,
             }}
           ></div>
         </div>
 
-        <p>
-          {item.atributos.progreso}% completado
-        </p>
+        <p>{item.atributos.progreso}% completado</p>
+
+        <select
+          value={item.estado}
+          onChange={(e) =>
+            onCambiarEstado(item.id, e.target.value)
+          }
+        >
+          <option value="jugando">Jugando</option>
+          <option value="completado">Completado</option>
+          <option value="pausado">Pausado</option>
+        </select>
 
         <button
           className="btn-eliminar"
@@ -40,4 +52,5 @@ function ItemCard({ item, onEliminar }) {
   )
 }
 
+export default React.memo(ItemCard)
 export default ItemCard
