@@ -4,7 +4,7 @@ const router = express.Router()
 const db = require('../db/database')
 
 /*
-GET /api/items
+GET /api/items s
 */
 router.get('/', (req, res) => {
   db.all(
