@@ -5,8 +5,8 @@ import App from './App'
 
 import './index.css'
 
-import { StorageProvider } from './context/StorageProvider'
-import { ThemeProvider } from './context/ThemeProvider'
+import { StorageProvider } from './Context/StorageProvider'
+import { ThemeProvider } from './Context/ThemeProvider'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

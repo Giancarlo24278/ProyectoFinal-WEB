@@ -2,11 +2,11 @@ import { useCallback, useContext, useMemo } from 'react'
 
 import {
   StorageContext,
-} from './context/StorageProvider'
+} from './Context/StorageProvider'
 
 import {
   ThemeContext,
-} from './context/ThemeProvider'
+} from './Context/ThemeProvider'
 
 import FormularioItem from './components/FormularioItem'
 import ListaItems from './components/ListaItems'
