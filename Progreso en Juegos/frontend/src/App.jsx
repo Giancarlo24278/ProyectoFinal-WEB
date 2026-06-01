@@ -8,13 +8,13 @@ import {
   ThemeContext,
 } from './Context/ThemeProvider'
 
-import FormularioItem from './components/FormularioItem'
-import ListaItems from './components/ListaItems'
-import FiltersPanel from './components/FiltersPanel'
-import StatsCards from './components/StatsCards'
-import ActivityChart from './components/charts/ActivityChart'
-import CategoryChart from './components/charts/CategoryChart'
-import OriginalChart from './components/charts/OriginalChart'
+import FormularioItem from './Components/FormularioItem'
+import ListaItems from './Components/ListaItems'
+import FiltersPanel from './Components/FiltersPanel'
+import StatsCards from './Components/StatsCards'
+import ActivityChart from './Components/charts/ActivityChart'
+import CategoryChart from './Components/charts/CategoryChart'
+import OriginalChart from './Components/charts/OriginalChart'
 
 import { useAtajoTeclado } from './hooks/useAtajoTeclado'
 import { useProgresoJuego } from './hooks/useProgresoJuego'
