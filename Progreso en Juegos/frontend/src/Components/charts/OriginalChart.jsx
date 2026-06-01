@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 
-import { categorias } from '../../utils/Categorias'
+import { categorias } from '../../Utils/Categorias'
 
 export default function OriginalChart({ data }) {
   return (

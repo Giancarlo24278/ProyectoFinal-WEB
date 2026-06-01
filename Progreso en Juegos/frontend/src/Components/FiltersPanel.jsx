@@ -1,4 +1,4 @@
-import { categorias } from '../utils/Categorias'
+import { categorias } from '../Utils/Categorias'
 
 export default function FiltersPanel({
   busqueda,

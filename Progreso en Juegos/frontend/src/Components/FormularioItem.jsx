@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react'
-import { categorias } from '../utils/Categorias'
+import { categorias } from '../Utils/Categorias'
 import { StorageContext } from '../context/StorageProvider'
 
 function FormularioItem() {
