@@ -1,7 +1,9 @@
 import { useCallback, useContext, useMemo } from 'react'
+
 import {
   StorageContext,
 } from './context/StorageProvider'
+
 import {
   ThemeContext,
 } from './context/ThemeProvider'
@@ -13,6 +15,7 @@ import StatsCards from './components/StatsCards'
 import ActivityChart from './components/charts/ActivityChart'
 import CategoryChart from './components/charts/CategoryChart'
 import OriginalChart from './components/charts/OriginalChart'
+
 import { useAtajoTeclado } from './hooks/useAtajoTeclado'
 import { useProgresoJuego } from './hooks/useProgresoJuego'
 

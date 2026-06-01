@@ -12,11 +12,18 @@ import {
   estadoInicial,
 } from '../reducers/itemsReducer'
 
+import { useLocalStorage }
+from '../hooks/useLocalStorage'
+
 export const StorageContext = createContext()
 
 export function StorageProvider({ children }) {
-  const [modo, setModoState] = useState(
-    () => localStorage.getItem('modo') || 'local'
+
+
+const [modo, setModoState] =
+  useLocalStorage(
+    'modo',
+    'local'
   )
 
   const [estado, dispatch] = useReducer(
@@ -26,7 +33,6 @@ export function StorageProvider({ children }) {
 
   const setModo = (nuevoModo) => {
     setModoState(nuevoModo)
-    localStorage.setItem('modo', nuevoModo)
   }
 
   const obtenerItems = useCallback(() => {

@@ -1,24 +1,21 @@
 import {
-  createContext,
-  useEffect,
-  useState
+  createContext
 } from 'react'
 
-export const ThemeContext = createContext()
+import { useLocalStorage }
+from '../hooks/useLocalStorage'
 
-export function ThemeProvider({ children }) {
-  const [tema, setTema] = useState(
-    () => localStorage.getItem('tema') || 'oscuro'
-  )
+export const ThemeContext =
+  createContext()
 
-  useEffect(() => {
-    document.body.setAttribute(
-      'data-theme',
-      tema
+export function ThemeProvider({
+  children,
+}) {
+  const [tema, setTema] =
+    useLocalStorage(
+      'tema',
+      'oscuro'
     )
-
-    localStorage.setItem('tema', tema)
-  }, [tema])
 
   const toggleTema = () => {
     setTema((prev) =>
@@ -28,11 +25,16 @@ export function ThemeProvider({ children }) {
     )
   }
 
+  document.body.setAttribute(
+    'data-theme',
+    tema
+  )
+
   return (
     <ThemeContext.Provider
       value={{
         tema,
-        toggleTema
+        toggleTema,
       }}
     >
       {children}
