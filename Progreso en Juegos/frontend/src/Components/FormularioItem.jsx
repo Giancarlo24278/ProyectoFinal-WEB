@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { categorias } from '../Utils/Categorias'
-import { StorageContext } from '../context/StorageProvider'
+import { StorageContext } from '../Context/StorageProvider'
 
 function FormularioItem() {
   const { guardarItem } = useContext(StorageContext)
