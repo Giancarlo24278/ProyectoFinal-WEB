@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
 
 /**
- * Escucha una combinación de teclas.
+ * Escucha una tecla o combinación.
  *
  * @param {string} tecla
  * @param {Function} onPress
- * @param {{ctrl?:boolean}} opciones
+ * @param {{ctrl?: boolean}} opciones
  */
 export function useAtajoTeclado(
   tecla,
@@ -21,14 +21,14 @@ export function useAtajoTeclado(
 
       if (enInput) return
 
-      if (ctrl && !e.ctrlKey) return
+      if (ctrl && !e.ctrlKey)
+        return
 
       if (
         e.key.toLowerCase() !==
         tecla.toLowerCase()
-      ) {
+      )
         return
-      }
 
       e.preventDefault()
 

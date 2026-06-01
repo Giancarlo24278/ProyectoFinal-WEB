@@ -1,19 +1,19 @@
-import { useEffect, useState } from 'react'
+import {
+  useEffect,
+  useState
+} from 'react'
 
 /**
- * Fetch reutilizable con AbortController.
+ * Hook reutilizable para fetch.
  *
  * @param {string} url
- * @returns {{
- * data:any,
- * cargando:boolean,
- * error:string|null
- * }}
  */
 export function useFetch(url) {
   const [data, setData] = useState(null)
-  const [cargando, setCargando] = useState(true)
-  const [error, setError] = useState(null)
+  const [cargando, setCargando] =
+    useState(true)
+  const [error, setError] =
+    useState(null)
 
   useEffect(() => {
     if (!url) {
@@ -21,16 +21,18 @@ export function useFetch(url) {
       return
     }
 
-    const controller = new AbortController()
+    const controller =
+      new AbortController()
 
-    const obtenerDatos = async () => {
+    async function cargar() {
       try {
         setCargando(true)
         setError(null)
 
-        const response = await fetch(url, {
-          signal: controller.signal,
-        })
+        const response =
+          await fetch(url, {
+            signal: controller.signal,
+          })
 
         if (!response.ok) {
           throw new Error(
@@ -38,11 +40,14 @@ export function useFetch(url) {
           )
         }
 
-        const json = await response.json()
+        const json =
+          await response.json()
 
         setData(json)
       } catch (err) {
-        if (err.name !== 'AbortError') {
+        if (
+          err.name !== 'AbortError'
+        ) {
           setError(err.message)
         }
       } finally {
@@ -50,7 +55,7 @@ export function useFetch(url) {
       }
     }
 
-    obtenerDatos()
+    cargar()
 
     return () => {
       controller.abort()

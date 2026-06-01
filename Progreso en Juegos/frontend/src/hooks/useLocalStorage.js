@@ -1,16 +1,20 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 /**
- * Sincroniza un estado con localStorage.
+ * Hook para sincronizar estado con localStorage.
  *
  * @param {string} clave
  * @param {*} valorInicial
  * @returns {[any, Function]}
  */
-export function useLocalStorage(clave, valorInicial) {
+export function useLocalStorage(
+  clave,
+  valorInicial
+) {
   const [valor, setValor] = useState(() => {
     try {
-      const guardado = localStorage.getItem(clave)
+      const guardado =
+        localStorage.getItem(clave)
 
       return guardado !== null
         ? JSON.parse(guardado)
@@ -27,10 +31,7 @@ export function useLocalStorage(clave, valorInicial) {
         JSON.stringify(valor)
       )
     } catch (error) {
-      console.warn(
-        `No se pudo guardar ${clave}`,
-        error
-      )
+      console.warn(error)
     }
   }, [clave, valor])
 
