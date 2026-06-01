@@ -13,6 +13,8 @@ import StatsCards from './components/StatsCards'
 import ActivityChart from './components/charts/ActivityChart'
 import CategoryChart from './components/charts/CategoryChart'
 import OriginalChart from './components/charts/OriginalChart'
+import { useAtajoTeclado } from './hooks/useAtajoTeclado'
+import { useProgresoJuego } from './hooks/useProgresoJuego'
 
 function getLast7Days() {
   const days = []
@@ -51,6 +53,7 @@ function App() {
   } = useContext(StorageContext)
 
   const { toggleTema } = useContext(ThemeContext)
+  const progreso = useProgresoJuego(items)
 
   const itemsVisibles = useMemo(() => {
     return items.filter((item) => {
@@ -178,14 +181,35 @@ function App() {
     limpiarFiltros()
   }, [limpiarFiltros])
 
+  useAtajoTeclado(
+  'k',
+  () => {
+    const input = document.querySelector('input')
+
+    if (input) {
+      input.focus()
+    }
+  },
+  { ctrl: true }
+  )
+
   return (
     <div className="container fase3">
       <header className="topbar">
         <div>
           <h1>🎮 Steam Tracker</h1>
+
           <p>
-            useReducer, Recharts, useMemo, useCallback y React.memo
+            useReducer, Recharts, useMemo,
+            useCallback, React.memo y Custom Hooks
           </p>
+
+          <small>
+            Progreso promedio:
+            {' '}
+            {progreso.promedio}
+            %
+          </small>
         </div>
 
         <div className="topbar-actions">

@@ -1,17 +1,10 @@
 import { useMemo } from 'react'
 
 /**
- * Calcula estadísticas de progreso
- * para una colección de juegos.
+ * Calcula estadísticas globales
+ * de la colección de juegos.
  *
  * @param {Array} juegos
- *
- * @returns {{
- * promedio:number,
- * completados:number,
- * pendientes:number,
- * total:number
- * }}
  */
 export function useProgresoJuego(juegos) {
   return useMemo(() => {
@@ -22,8 +15,9 @@ export function useProgresoJuego(juegos) {
         juego.estado === 'completado'
     ).length
 
-    const pendientes =
-      total - completados
+    const archivados = juegos.filter(
+      (juego) => !juego.activo
+    ).length
 
     const suma = juegos.reduce(
       (acc, juego) =>
@@ -38,10 +32,10 @@ export function useProgresoJuego(juegos) {
         : 0
 
     return {
-      promedio,
-      completados,
-      pendientes,
       total,
+      completados,
+      archivados,
+      promedio,
     }
   }, [juegos])
 }
